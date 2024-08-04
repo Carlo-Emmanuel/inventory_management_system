@@ -25,6 +25,8 @@ export default function Home() {
   const [inventory, setInventory] = useState([]);
   const [open, setOpen] = useState(false);
   const [itemName, setItemName] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  // const [filteredItems, setFilteredItems] = useState([]);  // not used. doesnt work as expected
 
   const updateInventory = async () => {
     const snapshot = query(collection(firestore, "inventory"));
@@ -38,6 +40,8 @@ export default function Home() {
     });
     setInventory(inventoryList);
   };
+
+  // helper functions
 
   const removeItem = async (itemName) => {
     // delete item from inventory
@@ -58,7 +62,7 @@ export default function Home() {
   };
 
   const addItem = async (itemName) => {
-    // delete item from inventory
+    // add item from inventory
     const docRef = doc(collection(firestore, "inventory"), itemName);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
@@ -74,6 +78,15 @@ export default function Home() {
     await updateInventory();
   };
 
+  // const searchItem = (e) => {
+  //   // search item from inventory
+  //   const itemName = e.target.value;
+  //   const filteredItems = inventory.filter((item) => {
+  //     return item.name.toLowerCase().includes(itemName.toLowerCase());
+  //   })
+  //   setFilteredItems(filteredItems)
+  // }  // not used. doesnt work as expected
+
   useEffect(() => {
     updateInventory();
   }, []);
@@ -86,6 +99,8 @@ export default function Home() {
     setOpen(false);
   };
 
+
+  
   return (
     <Box
       width="100vw"
@@ -133,10 +148,21 @@ export default function Home() {
           </Stack>
         </Box>
       </Modal>
-      <Typography variant="h1">Inventory Management</Typography>
+      <Typography variant="h3">Inventory Management</Typography>
+
+{/* search bar and add new items button */}
+      <Box flexDirection={'row'} gap={4} display={'flex'}> 
       <Button variant="contained" onClick={handleOpen}>
         Add New Item
       </Button>
+      {/* <TextField id="outlined-search" label="Search" value={searchTerm} 
+      onChange={
+        (e) => {setSearchTerm(e.target.value)
+        searchItem(e)
+      }} type="search" variant="outlined" 
+      /> */}  {/* not used. doesnt work as expected */}
+      </Box>
+      
       <Box border={"1px solid green"}>
         <Box
           width={"800px"}
@@ -146,7 +172,7 @@ export default function Home() {
           justifyContent={"center"}
           display={"flex"}
         >
-          <Typography variant="h2" color={"black"}>
+          <Typography variant="h4" color={"black"}>
             Inventory Items
           </Typography>
         </Box>
@@ -155,7 +181,7 @@ export default function Home() {
             <Box
               key={name}
               width={"100%"}
-              minHeight={"150px"}
+              minHeight={"100px"}
               display={"flex"}
               alignItems="center"
               justifyContent={"space-between"}
@@ -178,6 +204,7 @@ export default function Home() {
               </Stack>
             </Box>
           ))}
+        
         </Stack>
       </Box>
     </Box>
