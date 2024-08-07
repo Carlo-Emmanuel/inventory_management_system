@@ -25,8 +25,7 @@ export default function Home() {
   const [inventory, setInventory] = useState([]);
   const [open, setOpen] = useState(false);
   const [itemName, setItemName] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
-  // const [filteredItems, setFilteredItems] = useState([]);  // not used. doesnt work as expected
+  const [searchTerm, setSearchTerm] = useState('');
 
   const updateInventory = async () => {
     const snapshot = query(collection(firestore, "inventory"));
@@ -78,15 +77,6 @@ export default function Home() {
     await updateInventory();
   };
 
-  // const searchItem = (e) => {
-  //   // search item from inventory
-  //   const itemName = e.target.value;
-  //   const filteredItems = inventory.filter((item) => {
-  //     return item.name.toLowerCase().includes(itemName.toLowerCase());
-  //   })
-  //   setFilteredItems(filteredItems)
-  // }  // not used. doesnt work as expected
-
   useEffect(() => {
     updateInventory();
   }, []);
@@ -98,6 +88,12 @@ export default function Home() {
   const handleClose = () => {
     setOpen(false);
   };
+
+  const handleSearchChange = (e) => setSearchTerm(e.target.value)
+
+  const filteredInventory = inventory.filter((item) =>
+    item.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
 
   
@@ -150,19 +146,21 @@ export default function Home() {
       </Modal>
       <Typography variant="h3">Inventory Management</Typography>
 
-{/* search bar and add new items button */}
-      <Box flexDirection={'row'} gap={4} display={'flex'}> 
-      <Button variant="contained" onClick={handleOpen}>
-        Add New Item
-      </Button>
-      {/* <TextField id="outlined-search" label="Search" value={searchTerm} 
-      onChange={
-        (e) => {setSearchTerm(e.target.value)
-        searchItem(e)
-      }} type="search" variant="outlined" 
-      /> */}  {/* not used. doesnt work as expected */}
+      {/* search bar and add new items button */}
+      <Box flexDirection={"row"} gap={4} display={"flex"}>
+        <Button variant="contained" onClick={handleOpen}>
+          Add New Item
+        </Button>
+        <TextField
+          id="outlined-search"
+          label="Search"
+          value={searchTerm}
+          onChange={handleSearchChange}
+          type="search"
+          variant="outlined"
+        />
       </Box>
-      
+
       <Box border={"1px solid green"}>
         <Box
           width={"800px"}
@@ -177,7 +175,7 @@ export default function Home() {
           </Typography>
         </Box>
         <Stack width="800px" height="300px" spacing={2} overflow={"auto"}>
-          {inventory.map(({ name, quantity }) => (
+          {filteredInventory.map(({ name, quantity }) => (
             <Box
               key={name}
               width={"100%"}
@@ -204,7 +202,6 @@ export default function Home() {
               </Stack>
             </Box>
           ))}
-        
         </Stack>
       </Box>
     </Box>
